@@ -49,4 +49,10 @@ export class HomeComponent implements OnInit {
     const month = months[date.getMonth()];
     return { day, month };
   }
+
+  truncateText(text: string, maxLength: number): string {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
 }

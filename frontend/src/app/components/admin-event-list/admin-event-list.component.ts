@@ -101,4 +101,10 @@ export class AdminEventListComponent implements OnInit {
       }
     });
   }
+
+  truncateText(text: string, maxLength: number): string {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
 }

@@ -91,31 +91,33 @@
 
     <div class="row" *ngIf="!loading && activeEvents.length > 0">
       <div class="col-md-6 col-lg-4 mb-4" *ngFor="let event of activeEvents">
-        <div class="card h-100 event-card" [routerLink]="['/events', event.id]">
-          <div class="card-body">
-            <div class="d-flex align-items-start mb-3">
-              <div class="event-date me-3">
-                <div class="day">{{ formatDate(event.eventDate).day }}</div>
-                <div class="month">{{ formatDate(event.eventDate).month }}月</div>
+        <a [routerLink]="['/events', event.id]" class="text-decoration-none">
+          <div class="card h-100 event-card">
+            <div class="card-body">
+              <div class="d-flex align-items-start mb-3">
+                <div class="event-date me-3">
+                  <div class="day">{{ formatDate(event.eventDate).day }}</div>
+                  <div class="month">{{ formatDate(event.eventDate).month }}月</div>
+                </div>
+                <div class="flex-grow-1">
+                  <h5 class="card-title fw-bold mb-1">{{ event.name }}</h5>
+                  <p class="card-text text-muted small mb-2">
+                    <i class="bi bi-geo-alt me-1"></i>{{ event.location }}
+                  </p>
+                </div>
               </div>
-              <div class="flex-grow-1">
-                <h5 class="card-title fw-bold mb-1">{{ event.name }}</h5>
-                <p class="card-text text-muted small mb-2">
-                  <i class="bi bi-geo-alt me-1"></i>{{ event.location }}
-                </p>
+              <p class="card-text text-muted small mb-3" *ngIf="event.description">
+                {{ truncateText(event.description, 80) }}
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-success">正在报名</span>
+                <span class="text-primary fw-bold">
+                  <i class="bi bi-chevron-right"></i>
+                </span>
               </div>
-            </div>
-            <p class="card-text text-muted small mb-3" *ngIf="event.description">
-              {{ event.description | slice:0:80 }}...
-            </p>
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="badge bg-success">正在报名</span>
-              <span class="text-primary fw-bold">
-                <i class="bi bi-chevron-right"></i>
-              </span>
             </div>
           </div>
-        </div>
+        </a>
       </div>
     </div>
   </div>
@@ -153,7 +155,7 @@
                 </a>
               </h6>
               <p class="text-muted small mb-0" *ngIf="announcement.content">
-                {{ announcement.content | slice:0:100 }}...
+                {{ truncateText(announcement.content, 100) }}
               </p>
             </div>
           </div>

@@ -126,4 +126,9 @@ export class EventDetailComponent implements OnInit {
   setActiveTab(tab: 'info' | 'groups' | 'regulation' | 'pickup'): void {
     this.activeTab = tab;
   }
+
+  formatTextWithLineBreaks(text: string): string {
+    if (!text) return '';
+    return text.replace(/\n/g, '<br>');
+  }
 }
