@@ -41,7 +41,7 @@
       <tr *ngFor="let event of events">
         <td>
           <div class="fw-bold">{{ event.name }}</div>
-          <div class="text-muted small">{{ event.description | slice:0:30 }}...</div>
+          <div class="text-muted small" *ngIf="event.description">{{ truncateText(event.description, 30) }}</div>
         </td>
         <td>{{ event.eventDate | date:'yyyy-MM-dd' }}</td>
         <td>{{ event.location }}</td>

@@ -19,21 +19,21 @@
     <div class="container">
       <div class="row align-items-center">
         <div class="col-lg-8">
-          <h1 class="mb-3">{{ event.name }}</h1>
+          <h1 class="mb-3">{{ event!.name }}</h1>
           <p class="mb-2 opacity-90">
             <i class="bi bi-calendar-event me-2"></i>
-            {{ event.eventDate | date:'yyyy年MM月dd日' }}
-            <span *ngIf="event.eventTime" class="ms-3">
-              <i class="bi bi-clock me-2"></i>{{ event.eventTime }}
+            {{ event!.eventDate | date:'yyyy年MM月dd日' }}
+            <span *ngIf="event!.eventTime" class="ms-3">
+              <i class="bi bi-clock me-2"></i>{{ event!.eventTime }}
             </span>
           </p>
           <p class="mb-0 opacity-90">
-            <i class="bi bi-geo-alt me-2"></i>{{ event.location }}
+            <i class="bi bi-geo-alt me-2"></i>{{ event!.location }}
           </p>
         </div>
         <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
           <span class="badge bg-light text-primary p-2 px-3 fs-6">
-            报名时间：{{ event.registrationStartDate | date:'MM-dd' }} 至 {{ event.registrationEndDate | date:'MM-dd' }}
+            报名时间：{{ event!.registrationStartDate | date:'MM-dd' }} 至 {{ event!.registrationEndDate | date:'MM-dd' }}
           </span>
         </div>
       </div>
@@ -90,9 +90,9 @@
       <div *ngIf="activeTab === 'info'" class="card">
         <div class="card-body p-5">
           <h4 class="fw-bold mb-4">赛事介绍</h4>
-          <div *ngIf="event.description" [innerHTML]="event.description.replace(/\n/g, '<br>')">
+          <div *ngIf="event!.description" [innerHTML]="formatTextWithLineBreaks(event!.description)">
           </div>
-          <div *ngIf="!event.description" class="text-muted">
+          <div *ngIf="!event!.description" class="text-muted">
             暂无赛事介绍
           </div>
         </div>
@@ -145,10 +145,10 @@
       <!-- 竞赛规程 -->
       <div *ngIf="activeTab === 'regulation' && regulation" class="card">
         <div class="card-header">
-          <h4 class="mb-0 fw-bold">{{ regulation.title }}</h4>
+          <h4 class="mb-0 fw-bold">{{ regulation!.title }}</h4>
         </div>
         <div class="card-body p-5">
-          <div *ngIf="regulation.content" [innerHTML]="regulation.content.replace(/\n/g, '<br>')">
+          <div *ngIf="regulation!.content" [innerHTML]="formatTextWithLineBreaks(regulation!.content)">
           </div>
         </div>
       </div>
@@ -156,18 +156,18 @@
       <!-- 领物须知 -->
       <div *ngIf="activeTab === 'pickup' && pickupNote" class="card">
         <div class="card-header">
-          <h4 class="mb-0 fw-bold">{{ pickupNote.title }}</h4>
+          <h4 class="mb-0 fw-bold">{{ pickupNote!.title }}</h4>
         </div>
         <div class="card-body p-5">
-          <div class="row mb-4" *ngIf="pickupNote.pickupDate || pickupNote.pickupLocation">
-            <div class="col-md-6" *ngIf="pickupNote.pickupDate">
-              <p class="mb-1"><strong>领物日期：</strong>{{ pickupNote.pickupDate | date:'yyyy年MM月dd日' }}</p>
+          <div class="row mb-4" *ngIf="pickupNote!.pickupDate || pickupNote!.pickupLocation">
+            <div class="col-md-6" *ngIf="pickupNote!.pickupDate">
+              <p class="mb-1"><strong>领物日期：</strong>{{ pickupNote!.pickupDate | date:'yyyy年MM月dd日' }}</p>
             </div>
-            <div class="col-md-6" *ngIf="pickupNote.pickupLocation">
-              <p class="mb-1"><strong>领物地点：</strong>{{ pickupNote.pickupLocation }}</p>
+            <div class="col-md-6" *ngIf="pickupNote!.pickupLocation">
+              <p class="mb-1"><strong>领物地点：</strong>{{ pickupNote!.pickupLocation }}</p>
             </div>
           </div>
-          <div *ngIf="pickupNote.content" [innerHTML]="pickupNote.content.replace(/\n/g, '<br>')">
+          <div *ngIf="pickupNote!.content" [innerHTML]="formatTextWithLineBreaks(pickupNote!.content)">
           </div>
         </div>
       </div>
@@ -188,8 +188,8 @@
       <div class="modal-body">
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
           <div class="alert alert-info" *ngIf="selectedGroup">
-            <p class="mb-1"><strong>报名组别：</strong>{{ selectedGroup.name }}</p>
-            <p class="mb-0"><strong>报名费：</strong><span class="text-primary fw-bold">¥{{ selectedGroup.registrationFee }}</span></p>
+            <p class="mb-1"><strong>报名组别：</strong>{{ selectedGroup!.name }}</p>
+            <p class="mb-0"><strong>报名费：</strong><span class="text-primary fw-bold">¥{{ selectedGroup!.registrationFee }}</span></p>
           </div>
 
           <div class="mb-3">

@@ -1,0 +1,53 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <button class="btn btn-outline-secondary me-3" (click)="goBack()">
+      <i class="bi bi-arrow-left me-1"></i>返回
+    </button>
+    <span class="fw-bold fs-5">
+      <i class="bi bi-file-earmark-text text-primary me-2"></i>
+      发布竞赛规程
+    </span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <form [formGroup]="regulationForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label class="form-label">规程标题 <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" formControlName="title" placeholder="请输入规程标题">
+        <div *ngIf="regulationForm.get('title')?.invalid && regulationForm.get('title')?.touched" class="text-danger small mt-1">
+          请输入规程标题
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">版本号</label>
+        <input type="number" class="form-control" formControlName="version" placeholder="请输入版本号">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">规程内容 <span class="text-danger">*</span></label>
+        <textarea class="form-control" formControlName="content" rows="15" placeholder="请输入竞赛规程内容"></textarea>
+        <div *ngIf="regulationForm.get('content')?.invalid && regulationForm.get('content')?.touched" class="text-danger small mt-1">
+          请输入规程内容
+        </div>
+      </div>
+
+      <div class="alert alert-info small" role="alert">
+        <i class="bi bi-info-circle me-2"></i>
+        提示：竞赛规程通常包含赛事规则、参赛要求、奖励办法、处罚措施等内容。发布后，跑者可以在赛事详情页查看。
+      </div>
+
+      <div class="d-flex gap-3">
+        <button type="button" class="btn btn-secondary" (click)="goBack()">
+          取消
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="submitting || regulationForm.invalid">
+          <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+          {{ submitting ? '提交中...' : '发布' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

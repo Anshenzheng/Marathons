@@ -66,4 +66,8 @@ export class AdminAnnouncementFormComponent implements OnInit {
       }
     });
   }
+
+  goBack(): void {
+    this.router.navigate(['/admin/events']);
+  }
 }

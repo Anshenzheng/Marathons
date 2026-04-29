@@ -71,4 +71,10 @@ export class EventListComponent implements OnInit {
       default: return status;
     }
   }
+
+  truncateText(text: string, maxLength: number): string {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
 }
