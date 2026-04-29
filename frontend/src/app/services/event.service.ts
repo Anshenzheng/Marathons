@@ -13,6 +13,7 @@ export interface Event {
   registrationStartDate: string;
   registrationEndDate: string;
   status: 'draft' | 'published' | 'offline' | 'ended';
+  registrationStatus?: 'not_started' | 'active' | 'ended' | 'offline' | 'draft';
   createdBy: number;
   createdAt: string;
   updatedAt: string;

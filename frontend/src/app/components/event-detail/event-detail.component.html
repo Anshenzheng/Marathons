@@ -19,7 +19,16 @@
     <div class="container">
       <div class="row align-items-center">
         <div class="col-lg-8">
-          <h1 class="mb-3">{{ event!.name }}</h1>
+          <div class="d-flex align-items-center mb-2">
+            <h1 class="mb-0 me-3">{{ event!.name }}</h1>
+            <span class="badge" [class.bg-success]="canRegister()" 
+                                   [class.bg-info]="getRegistrationStatus() === 'not_started'"
+                                   [class.bg-secondary]="getRegistrationStatus() === 'ended'"
+                                   [class.bg-dark]="getRegistrationStatus() === 'offline'"
+                                   [class.bg-warning]="getRegistrationStatus() === 'draft'">
+              {{ getRegistrationStatusText() }}
+            </span>
+          </div>
           <p class="mb-2 opacity-90">
             <i class="bi bi-calendar-event me-2"></i>
             {{ event!.eventDate | date:'yyyy年MM月dd日' }}
@@ -32,9 +41,26 @@
           </p>
         </div>
         <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-          <span class="badge bg-light text-primary p-2 px-3 fs-6">
-            报名时间：{{ event!.registrationStartDate | date:'MM-dd' }} 至 {{ event!.registrationEndDate | date:'MM-dd' }}
-          </span>
+          <div class="mb-2">
+            <span class="badge bg-light text-primary p-2 px-3 fs-6">
+              报名时间：{{ event!.registrationStartDate | date:'MM-dd' }} 至 {{ event!.registrationEndDate | date:'MM-dd' }}
+            </span>
+          </div>
+          <button 
+            *ngIf="canRegister()"
+            class="btn btn-light btn-lg px-5 mt-2"
+            (click)="setActiveTab('groups')"
+          >
+            <i class="bi bi-pencil-square me-2"></i>立即报名
+          </button>
+          <button 
+            *ngIf="!canRegister() && !isLoggedIn && getRegistrationStatus() !== 'offline' && getRegistrationStatus() !== 'draft'"
+            class="btn btn-light btn-lg px-5 mt-2"
+            [routerLink]="['/login']"
+            [queryParams]="{ returnUrl: '/events/' + event!.id }"
+          >
+            <i class="bi bi-box-arrow-in-right me-2"></i>登录后报名
+          </button>
         </div>
       </div>
     </div>

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EventService, Event, Announcement } from '../../services/event.service';
+import { AuthService, User } from '../../services/auth.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -11,8 +13,14 @@ export class HomeComponent implements OnInit {
   activeEvents: Event[] = [];
   announcements: Announcement[] = [];
   loading = true;
+  currentUser$: Observable<User | null>;
 
-  constructor(private eventService: EventService) {}
+  constructor(
+    private eventService: EventService,
+    private authService: AuthService
+  ) {
+    this.currentUser$ = this.authService.currentUser$;
+  }
 
   ngOnInit(): void {
     this.loadData();
