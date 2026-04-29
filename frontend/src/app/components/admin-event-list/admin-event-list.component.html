@@ -1,0 +1,96 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="fw-bold mb-0">
+    <i class="bi bi-calendar-event text-primary me-2"></i>赛事管理
+  </h4>
+  <button 
+    class="btn btn-primary"
+    routerLink="/admin/events/create"
+  >
+    <i class="bi bi-plus-circle me-1"></i>发布赛事
+  </button>
+</div>
+
+<!-- 加载状态 -->
+<div *ngIf="loading" class="text-center py-5">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">加载中...</span>
+  </div>
+</div>
+
+<!-- 空状态 -->
+<div *ngIf="!loading && events.length === 0" class="text-center py-5">
+  <i class="bi bi-calendar-x display-1 text-muted mb-3"></i>
+  <h5 class="text-muted">暂无赛事</h5>
+  <p class="text-muted mb-4">点击上方按钮发布新赛事</p>
+</div>
+
+<!-- 赛事列表 -->
+<div *ngIf="!loading && events.length > 0" class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>赛事名称</th>
+        <th>赛事日期</th>
+        <th>地点</th>
+        <th>报名时间</th>
+        <th>状态</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let event of events">
+        <td>
+          <div class="fw-bold">{{ event.name }}</div>
+          <div class="text-muted small">{{ event.description | slice:0:30 }}...</div>
+        </td>
+        <td>{{ event.eventDate | date:'yyyy-MM-dd' }}</td>
+        <td>{{ event.location }}</td>
+        <td>
+          <div class="small">
+            {{ event.registrationStartDate | date:'MM-dd' }} 至
+            <br>{{ event.registrationEndDate | date:'MM-dd' }}
+          </div>
+        </td>
+        <td>
+          <span class="badge {{ getStatusClass(event.status) }}">
+            {{ getStatusText(event.status) }}
+          </span>
+        </td>
+        <td>
+          <div class="btn-group btn-group-sm" role="group">
+            <button 
+              class="btn btn-outline-info"
+              (click)="viewRegistrations(event)"
+              title="查看报名"
+            >
+              <i class="bi bi-people"></i>
+            </button>
+            <button 
+              class="btn btn-outline-secondary"
+              (click)="editEvent(event)"
+              title="编辑"
+            >
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button 
+              class="btn btn-outline-success"
+              *ngIf="canPublish(event)"
+              (click)="publishEvent(event)"
+              title="发布"
+            >
+              <i class="bi bi-send"></i>
+            </button>
+            <button 
+              class="btn btn-outline-warning"
+              *ngIf="canOffline(event)"
+              (click)="offlineEvent(event)"
+              title="下架"
+            >
+              <i class="bi bi-x-circle"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,106 @@
+<section class="page-header">
+  <div class="container">
+    <h1 class="mb-2">我的报名</h1>
+    <p class="mb-0 opacity-90">查看和管理您的马拉松报名记录</p>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <!-- 加载状态 -->
+    <div *ngIf="loading" class="text-center py-5">
+      <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">加载中...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 空状态 -->
+    <div *ngIf="!loading && registrations.length === 0" class="text-center py-5">
+      <i class="bi bi-clipboard-x display-1 text-muted mb-3"></i>
+      <h4 class="text-muted">暂无报名记录</h4>
+      <p class="text-muted mb-4">快去浏览精彩赛事，开启您的跑步之旅吧！</p>
+      <a routerLink="/events" class="btn btn-primary">
+        <i class="bi bi-calendar-event me-2"></i>浏览赛事
+      </a>
+    </div>
+
+    <!-- 报名列表 -->
+    <div *ngIf="!loading && registrations.length > 0">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>赛事名称</th>
+              <th>报名组别</th>
+              <th>T恤尺码</th>
+              <th>报名时间</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let registration of registrations">
+              <td>
+                <div class="fw-bold">{{ registration.eventId }}</div>
+                <div class="text-muted small">{{ registration.createdAt | date:'yyyy-MM-dd' }}</div>
+              </td>
+              <td>{{ registration.groupId }}</td>
+              <td>
+                <span *ngIf="registration.shirtSize" class="badge bg-secondary">
+                  {{ registration.shirtSize }}
+                </span>
+                <span *ngIf="!registration.shirtSize" class="text-muted">-</span>
+              </td>
+              <td>{{ registration.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
+              <td>
+                <span class="badge {{ getStatusClass(registration.status) }}">
+                  {{ getStatusText(registration.status) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <button 
+                    class="btn btn-sm btn-outline-danger"
+                    *ngIf="canCancel(registration)"
+                    (click)="cancelRegistration(registration)"
+                  >
+                    <i class="bi bi-x-circle me-1"></i>取消
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 状态说明 -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h6 class="mb-0 fw-bold"><i class="bi bi-info-circle me-2"></i>状态说明</h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3 mb-2">
+              <span class="badge badge-pending">待审核</span>
+              <span class="ms-2 text-muted small">报名已提交，等待管理员审核</span>
+            </div>
+            <div class="col-md-3 mb-2">
+              <span class="badge badge-approved">已通过</span>
+              <span class="ms-2 text-muted small">报名审核通过，参赛资格确认</span>
+            </div>
+            <div class="col-md-3 mb-2">
+              <span class="badge badge-rejected">已拒绝</span>
+              <span class="ms-2 text-muted small">报名未通过审核</span>
+            </div>
+            <div class="col-md-3 mb-2">
+              <span class="badge badge-cancelled">已取消</span>
+              <span class="ms-2 text-muted small">您已取消该报名</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

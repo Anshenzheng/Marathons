@@ -1,0 +1,101 @@
+<section class="page-header">
+  <div class="container">
+    <h1 class="mb-2">赛事列表</h1>
+    <p class="mb-0 opacity-90">探索精彩马拉松赛事，开启您的跑步之旅</p>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <!-- 筛选器 -->
+    <div class="d-flex gap-2 mb-4 flex-wrap">
+      <button 
+        class="btn" 
+        [class.btn-primary]="filter === 'all'"
+        [class.btn-outline-primary]="filter !== 'all'"
+        (click)="onFilterChange('all')"
+      >
+        全部赛事
+      </button>
+      <button 
+        class="btn" 
+        [class.btn-primary]="filter === 'active'"
+        [class.btn-outline-primary]="filter !== 'active'"
+        (click)="onFilterChange('active')"
+      >
+        <i class="bi bi-fire me-1"></i>正在报名
+      </button>
+      <button 
+        class="btn" 
+        [class.btn-primary]="filter === 'upcoming'"
+        [class.btn-outline-primary]="filter !== 'upcoming'"
+        (click)="onFilterChange('upcoming')"
+      >
+        <i class="bi bi-calendar3 me-1"></i>即将开始
+      </button>
+    </div>
+
+    <!-- 加载状态 -->
+    <div *ngIf="loading" class="text-center py-5">
+      <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">加载中...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 空状态 -->
+    <div *ngIf="!loading && events.length === 0" class="text-center py-5">
+      <i class="bi bi-calendar-x display-1 text-muted mb-3"></i>
+      <h4 class="text-muted">暂无赛事</h4>
+      <p class="text-muted">敬请期待更多精彩赛事</p>
+    </div>
+
+    <!-- 赛事列表 -->
+    <div class="row" *ngIf="!loading && events.length > 0">
+      <div class="col-12 mb-4" *ngFor="let event of events">
+        <div class="card event-card" [routerLink]="['/events', event.id]">
+          <div class="card-body p-4">
+            <div class="row align-items-center">
+              <div class="col-md-2 col-12 mb-3 mb-md-0">
+                <div class="event-date text-center">
+                  <div class="day">{{ formatDate(event.eventDate).day }}</div>
+                  <div class="month">{{ formatDate(event.eventDate).month }}月</div>
+                  <div class="small opacity-90">{{ formatDate(event.eventDate).year }}</div>
+                </div>
+              </div>
+              <div class="col-md-7 col-12 mb-3 mb-md-0">
+                <div class="d-flex align-items-center mb-2">
+                  <h4 class="fw-bold mb-0 me-2">{{ event.name }}</h4>
+                  <span class="badge {{ getStatusBadgeClass(event.status) }}">
+                    {{ getStatusText(event.status) }}
+                  </span>
+                </div>
+                <p class="text-muted mb-2">
+                  <i class="bi bi-geo-alt me-1"></i>{{ event.location }}
+                </p>
+                <p class="text-muted small mb-0" *ngIf="event.description">
+                  {{ event.description | slice:0:150 }}{{ event.description.length > 150 ? '...' : '' }}
+                </p>
+              </div>
+              <div class="col-md-3 col-12 text-md-end">
+                <div class="mb-2">
+                  <span class="text-muted small">报名时间</span>
+                  <p class="mb-0 small">
+                    {{ event.registrationStartDate | date:'yyyy-MM-dd' }} 至
+                    <br>{{ event.registrationEndDate | date:'yyyy-MM-dd' }}
+                  </p>
+                </div>
+                <div class="mt-3">
+                  <span class="text-primary fw-bold">
+                    查看详情 <i class="bi bi-chevron-right ms-1"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
