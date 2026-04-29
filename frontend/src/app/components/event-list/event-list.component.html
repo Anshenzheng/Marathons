@@ -68,8 +68,8 @@
                 <div class="col-md-7 col-12 mb-3 mb-md-0">
                   <div class="d-flex align-items-center mb-2">
                     <h4 class="fw-bold mb-0 me-2">{{ event.name }}</h4>
-                    <span class="badge {{ getStatusBadgeClass(event.status) }}">
-                      {{ getStatusText(event.status) }}
+                    <span class="badge {{ getStatusBadgeClass(getRegistrationStatus(event)) }}">
+                      {{ getStatusText(getRegistrationStatus(event)) }}
                     </span>
                   </div>
                   <p class="text-muted mb-2">

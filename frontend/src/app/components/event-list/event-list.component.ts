@@ -56,20 +56,46 @@ export class EventListComponent implements OnInit {
 
   getStatusBadgeClass(status: string): string {
     switch (status) {
-      case 'published': return 'bg-success';
-      case 'offline': return 'bg-secondary';
-      case 'ended': return 'bg-dark';
+      case 'active': return 'bg-success';
+      case 'not_started': return 'bg-info';
+      case 'ended': return 'bg-secondary';
+      case 'offline': return 'bg-dark';
+      case 'draft': return 'bg-warning';
       default: return 'bg-secondary';
     }
   }
 
   getStatusText(status: string): string {
     switch (status) {
-      case 'published': return '报名中';
+      case 'active': return '报名中';
+      case 'not_started': return '未开始报名';
+      case 'ended': return '已截止报名';
       case 'offline': return '已下架';
-      case 'ended': return '已结束';
+      case 'draft': return '草稿';
       default: return status;
     }
+  }
+
+  getRegistrationStatus(event: Event): string {
+    if (event.registrationStatus) {
+      return event.registrationStatus;
+    }
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const startDate = new Date(event.registrationStartDate);
+    startDate.setHours(0, 0, 0, 0);
+    
+    const endDate = new Date(event.registrationEndDate);
+    endDate.setHours(0, 0, 0, 0);
+    
+    if (event.status === 'offline') return 'offline';
+    if (event.status === 'draft') return 'draft';
+    
+    if (today < startDate) return 'not_started';
+    else if (today > endDate) return 'ended';
+    else return 'active';
   }
 
   truncateText(text: string, maxLength: number): string {

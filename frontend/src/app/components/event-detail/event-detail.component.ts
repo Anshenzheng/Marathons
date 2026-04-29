@@ -131,4 +131,44 @@ export class EventDetailComponent implements OnInit {
     if (!text) return '';
     return text.replace(/\n/g, '<br>');
   }
+
+  getRegistrationStatus(): string {
+    if (!this.event) return 'offline';
+    
+    if (this.event.registrationStatus) {
+      return this.event.registrationStatus;
+    }
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const startDate = new Date(this.event.registrationStartDate);
+    startDate.setHours(0, 0, 0, 0);
+    
+    const endDate = new Date(this.event.registrationEndDate);
+    endDate.setHours(0, 0, 0, 0);
+    
+    if (this.event.status === 'offline') return 'offline';
+    if (this.event.status === 'draft') return 'draft';
+    
+    if (today < startDate) return 'not_started';
+    else if (today > endDate) return 'ended';
+    else return 'active';
+  }
+
+  getRegistrationStatusText(): string {
+    const status = this.getRegistrationStatus();
+    switch (status) {
+      case 'active': return '报名中';
+      case 'not_started': return '未开始报名';
+      case 'ended': return '已截止报名';
+      case 'offline': return '已下架';
+      case 'draft': return '草稿';
+      default: return status;
+    }
+  }
+
+  canRegister(): boolean {
+    return this.getRegistrationStatus() === 'active';
+  }
 }

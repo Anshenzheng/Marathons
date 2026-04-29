@@ -103,4 +103,27 @@ public class Event {
 
     public Integer getIsDeleted() { return isDeleted; }
     public void setIsDeleted(Integer isDeleted) { this.isDeleted = isDeleted; }
+
+    public enum RegistrationStatus {
+        not_started, active, ended, offline, draft
+    }
+
+    @Transient
+    public RegistrationStatus getRegistrationStatus() {
+        if (status == Status.offline) {
+            return RegistrationStatus.offline;
+        }
+        if (status == Status.draft) {
+            return RegistrationStatus.draft;
+        }
+        
+        LocalDate today = LocalDate.now();
+        if (today.isBefore(registrationStartDate)) {
+            return RegistrationStatus.not_started;
+        } else if (today.isAfter(registrationEndDate)) {
+            return RegistrationStatus.ended;
+        } else {
+            return RegistrationStatus.active;
+        }
+    }
 }
