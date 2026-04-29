@@ -1,0 +1,149 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="fw-bold mb-0">
+    <i class="bi bi-calendar-event text-primary me-2"></i>
+    {{ isEdit ? '编辑赛事' : '发布赛事' }}
+  </h4>
+  <button class="btn btn-outline-secondary" (click)="goBack()">
+    <i class="bi bi-arrow-left me-1"></i>返回
+  </button>
+</div>
+
+<div *ngIf="loading" class="text-center py-5">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">加载中...</span>
+  </div>
+</div>
+
+<div *ngIf="!loading" class="card">
+  <div class="card-body p-5">
+    <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-8 mb-4">
+          <label class="form-label">赛事名称 <span class="text-danger">*</span></label>
+          <input 
+            type="text" 
+            class="form-control" 
+            formControlName="name"
+            placeholder="请输入赛事名称"
+          >
+          <div *ngIf="eventForm.get('name')?.invalid && eventForm.get('name')?.touched" class="text-danger small">
+            请输入赛事名称
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <label class="form-label">赛事地点 <span class="text-danger">*</span></label>
+          <input 
+            type="text" 
+            class="form-control" 
+            formControlName="location"
+            placeholder="请输入赛事地点"
+          >
+          <div *ngIf="eventForm.get('location')?.invalid && eventForm.get('location')?.touched" class="text-danger small">
+            请输入赛事地点
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <label class="form-label">赛事日期 <span class="text-danger">*</span></label>
+          <input 
+            type="date" 
+            class="form-control" 
+            formControlName="eventDate"
+          >
+          <div *ngIf="eventForm.get('eventDate')?.invalid && eventForm.get('eventDate')?.touched" class="text-danger small">
+            请选择赛事日期
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <label class="form-label">赛事时间</label>
+          <input 
+            type="time" 
+            class="form-control" 
+            formControlName="eventTime"
+          >
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <label class="form-label">报名开始日期 <span class="text-danger">*</span></label>
+          <input 
+            type="date" 
+            class="form-control" 
+            formControlName="registrationStartDate"
+          >
+          <div *ngIf="eventForm.get('registrationStartDate')?.invalid && eventForm.get('registrationStartDate')?.touched" class="text-danger small">
+            请选择报名开始日期
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <label class="form-label">报名截止日期 <span class="text-danger">*</span></label>
+          <input 
+            type="date" 
+            class="form-control" 
+            formControlName="registrationEndDate"
+          >
+          <div *ngIf="eventForm.get('registrationEndDate')?.invalid && eventForm.get('registrationEndDate')?.touched" class="text-danger small">
+            请选择报名截止日期
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label">赛事描述</label>
+        <textarea 
+          class="form-control" 
+          formControlName="description"
+          rows="5"
+          placeholder="请输入赛事描述"
+        ></textarea>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-secondary me-2" (click)="goBack()">
+          取消
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="submitting || eventForm.invalid"
+        >
+          <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+          {{ submitting ? '提交中...' : (isEdit ? '保存修改' : '创建赛事') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 已有组别列表（编辑时显示） -->
+<div *ngIf="isEdit && groups.length > 0" class="card mt-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h6 class="mb-0 fw-bold"><i class="bi bi-list-check me-2"></i>已有组别</h6>
+    <span class="text-muted small">请在代码中完善组别管理功能</span>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>组别名称</th>
+            <th>距离</th>
+            <th>报名费</th>
+            <th>最大人数</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let group of groups">
+            <td>{{ group.name }}</td>
+            <td>{{ group.distance }}</td>
+            <td>¥{{ group.registrationFee }}</td>
+            <td>{{ group.maxParticipants }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

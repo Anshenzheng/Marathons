@@ -1,0 +1,206 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <button class="btn btn-outline-secondary me-3" (click)="goBack()">
+      <i class="bi bi-arrow-left me-1"></i>返回
+    </button>
+    <span class="fw-bold fs-5">
+      <i class="bi bi-people text-primary me-2"></i>
+      {{ event?.name }} - 报名名单
+    </span>
+  </div>
+  <div>
+    <button class="btn btn-success" (click)="exportData()">
+      <i class="bi bi-file-excel me-1"></i>导出Excel
+    </button>
+  </div>
+</div>
+
+<!-- 统计信息 -->
+<div *ngIf="statistics" class="row mb-4">
+  <div class="col-md-3 mb-3">
+    <div class="stats-card">
+      <i class="bi bi-person-check stats-icon text-success"></i>
+      <div class="stats-value">{{ statistics.totalRegistered }}</div>
+      <div class="stats-label">总报名人数</div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-3">
+    <div class="stats-card">
+      <i class="bi bi-clipboard-check stats-icon text-primary"></i>
+      <div class="stats-value">{{ statistics.totalCapacity }}</div>
+      <div class="stats-label">总容量</div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-3">
+    <div class="stats-card">
+      <i class="bi bi-box stats-icon text-info"></i>
+      <div class="stats-value">{{ statistics.totalRemaining }}</div>
+      <div class="stats-label">剩余名额</div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-3">
+    <div class="stats-card">
+      <i class="bi bi-hourglass-split stats-icon text-warning"></i>
+      <div class="stats-value">{{ pendingRegistrations.length }}</div>
+      <div class="stats-label">待审核</div>
+    </div>
+  </div>
+</div>
+
+<!-- 组别统计 -->
+<div *ngIf="statistics?.groupStatistics?.length" class="card mb-4">
+  <div class="card-header">
+    <h6 class="mb-0 fw-bold"><i class="bi bi-bar-chart me-2"></i>组别报名统计</h6>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-4 mb-3" *ngFor="let group of statistics.groupStatistics">
+        <div class="border rounded p-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-bold">{{ group.groupName }}</span>
+            <span class="badge bg-secondary">{{ group.distance }}</span>
+          </div>
+          <div class="progress mb-2" style="height: 8px;">
+            <div 
+              class="progress-bar bg-primary" 
+              [style.width]="(group.registeredCount / group.maxParticipants * 100) + '%'"
+            ></div>
+          </div>
+          <div class="d-flex justify-content-between small text-muted">
+            <span>已报名: {{ group.registeredCount }}</span>
+            <span>剩余: {{ group.remainingCount }} / {{ group.maxParticipants }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 批量审核 -->
+<div *ngIf="pendingRegistrations.length > 0" class="card mb-4">
+  <div class="card-header">
+    <h6 class="mb-0 fw-bold"><i class="bi bi-check2-all me-2"></i>批量审核</h6>
+  </div>
+  <div class="card-body">
+    <div class="row align-items-center">
+      <div class="col-auto">
+        <div class="form-check">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            [checked]="selectedIds.length === pendingRegistrations.length && pendingRegistrations.length > 0"
+            (change)="toggleAllSelection()"
+            id="selectAll"
+          >
+          <label class="form-check-label" for="selectAll">
+            全选 ({{ selectedIds.length }}/{{ pendingRegistrations.length }})
+          </label>
+        </div>
+      </div>
+      <div class="col-auto">
+        <select 
+          class="form-select" 
+          [(ngModel)]="batchStatus"
+          [disabled]="selectedIds.length === 0"
+        >
+          <option [ngValue]="null">请选择审核结果</option>
+          <option value="approved">通过</option>
+          <option value="rejected">拒绝</option>
+        </select>
+      </div>
+      <div class="col">
+        <input 
+          type="text" 
+          class="form-control" 
+          placeholder="审核备注（可选）"
+          [(ngModel)]="batchRemark"
+          [disabled]="selectedIds.length === 0"
+        >
+      </div>
+      <div class="col-auto">
+        <button 
+          class="btn btn-primary"
+          [disabled]="selectedIds.length === 0 || !batchStatus"
+          (click)="batchReview()"
+        >
+          批量审核
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 报名列表 -->
+<div *ngIf="loading" class="text-center py-5">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">加载中...</span>
+  </div>
+</div>
+
+<div *ngIf="!loading" class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th style="width: 50px;"></th>
+        <th>用户ID</th>
+        <th>组别</th>
+        <th>T恤尺码</th>
+        <th>报名时间</th>
+        <th>状态</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let registration of registrations">
+        <td>
+          <div class="form-check" *ngIf="registration.status === 'pending'">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              [checked]="selectedIds.includes(registration.id)"
+              (change)="toggleSelection(registration.id)"
+              [id]="'check_' + registration.id"
+            >
+          </div>
+        </td>
+        <td>{{ registration.userId }}</td>
+        <td>{{ registration.groupId }}</td>
+        <td>
+          <span *ngIf="registration.shirtSize" class="badge bg-secondary">
+            {{ registration.shirtSize }}
+          </span>
+        </td>
+        <td>{{ registration.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
+        <td>
+          <span class="badge {{ getStatusClass(registration.status) }}">
+            {{ getStatusText(registration.status) }}
+          </span>
+        </td>
+        <td>
+          <div *ngIf="registration.status === 'pending'" class="btn-group btn-group-sm">
+            <button 
+              class="btn btn-success"
+              (click)="reviewRegistration(registration, 'approved')"
+              title="通过"
+            >
+              <i class="bi bi-check-lg"></i>
+            </button>
+            <button 
+              class="btn btn-danger"
+              (click)="reviewRegistration(registration, 'rejected')"
+              title="拒绝"
+            >
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+          <span *ngIf="registration.status !== 'pending'" class="text-muted small">-</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="registrations.length === 0" class="text-center py-5">
+    <i class="bi bi-clipboard-x display-1 text-muted mb-3"></i>
+    <h5 class="text-muted">暂无报名记录</h5>
+  </div>
+</div>

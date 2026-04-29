@@ -1,0 +1,193 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+      <div class="card shadow-lg fade-in">
+        <div class="card-header text-center py-4">
+          <i class="bi bi-person-plus display-4 text-white mb-2"></i>
+          <h3 class="mb-0">用户注册</h3>
+        </div>
+        <div class="card-body p-5">
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div *ngIf="error" class="alert alert-danger" role="alert">
+              {{ error }}
+            </div>
+
+            <div *ngIf="success" class="alert alert-success" role="alert">
+              注册成功！即将跳转到登录页面...
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">用户名 <span class="text-danger">*</span></label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  formControlName="username"
+                  placeholder="3-20个字符"
+                >
+                <div *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" class="text-danger small">
+                  <span *ngIf="registerForm.get('username')?.errors?.['required']">请输入用户名</span>
+                  <span *ngIf="registerForm.get('username')?.errors?.['minlength']">用户名至少3个字符</span>
+                  <span *ngIf="registerForm.get('username')?.errors?.['maxlength']">用户名最多20个字符</span>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label">真实姓名 <span class="text-danger">*</span></label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  formControlName="realName"
+                  placeholder="请输入真实姓名"
+                >
+                <div *ngIf="registerForm.get('realName')?.invalid && registerForm.get('realName')?.touched" class="text-danger small">
+                  请输入真实姓名
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">密码 <span class="text-danger">*</span></label>
+                <input 
+                  type="password" 
+                  class="form-control" 
+                  formControlName="password"
+                  placeholder="6-20个字符"
+                >
+                <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-danger small">
+                  <span *ngIf="registerForm.get('password')?.errors?.['required']">请输入密码</span>
+                  <span *ngIf="registerForm.get('password')?.errors?.['minlength']">密码至少6个字符</span>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label">确认密码 <span class="text-danger">*</span></label>
+                <input 
+                  type="password" 
+                  class="form-control" 
+                  formControlName="confirmPassword"
+                  placeholder="请再次输入密码"
+                >
+                <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="text-danger small">
+                  <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">请确认密码</span>
+                  <span *ngIf="registerForm.get('confirmPassword')?.errors?.['passwordMismatch']">两次密码不一致</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">身份证号 <span class="text-danger">*</span></label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  formControlName="idCard"
+                  placeholder="请输入18位身份证号"
+                >
+                <div *ngIf="registerForm.get('idCard')?.invalid && registerForm.get('idCard')?.touched" class="text-danger small">
+                  <span *ngIf="registerForm.get('idCard')?.errors?.['required']">请输入身份证号</span>
+                  <span *ngIf="registerForm.get('idCard')?.errors?.['pattern']">请输入正确的身份证号</span>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label">手机号 <span class="text-danger">*</span></label>
+                <input 
+                  type="tel" 
+                  class="form-control" 
+                  formControlName="phone"
+                  placeholder="请输入手机号"
+                >
+                <div *ngIf="registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched" class="text-danger small">
+                  <span *ngIf="registerForm.get('phone')?.errors?.['required']">请输入手机号</span>
+                  <span *ngIf="registerForm.get('phone')?.errors?.['pattern']">请输入正确的手机号</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">性别 <span class="text-danger">*</span></label>
+                <select class="form-select" formControlName="gender">
+                  <option value="">请选择</option>
+                  <option value="male">男</option>
+                  <option value="female">女</option>
+                </select>
+                <div *ngIf="registerForm.get('gender')?.invalid && registerForm.get('gender')?.touched" class="text-danger small">
+                  请选择性别
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label">出生日期 <span class="text-danger">*</span></label>
+                <input 
+                  type="date" 
+                  class="form-control" 
+                  formControlName="birthDate"
+                >
+                <div *ngIf="registerForm.get('birthDate')?.invalid && registerForm.get('birthDate')?.touched" class="text-danger small">
+                  请选择出生日期
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">邮箱</label>
+                <input 
+                  type="email" 
+                  class="form-control" 
+                  formControlName="email"
+                  placeholder="请输入邮箱（选填）"
+                >
+                <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-danger small">
+                  请输入正确的邮箱格式
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label">紧急联系人</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  formControlName="emergencyContact"
+                  placeholder="请输入紧急联系人（选填）"
+                >
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">紧急联系电话</label>
+              <input 
+                type="tel" 
+                class="form-control" 
+                formControlName="emergencyPhone"
+                placeholder="请输入紧急联系电话（选填）"
+              >
+              <div *ngIf="registerForm.get('emergencyPhone')?.invalid && registerForm.get('emergencyPhone')?.touched" class="text-danger small">
+                请输入正确的手机号
+              </div>
+            </div>
+
+            <div class="d-grid">
+              <button 
+                type="submit" 
+                class="btn btn-primary btn-lg"
+                [disabled]="loading || registerForm.invalid"
+              >
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                {{ loading ? '注册中...' : '注 册' }}
+              </button>
+            </div>
+          </form>
+
+          <div class="text-center mt-4">
+            <p class="mb-0">已有账号？</p>
+            <a routerLink="/login" class="text-decoration-none">立即登录</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

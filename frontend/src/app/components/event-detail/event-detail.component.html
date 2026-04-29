@@ -1,0 +1,254 @@
+<div *ngIf="loading" class="text-center py-5">
+  <div class="loading-spinner">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">加载中...</span>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!loading && !event" class="container py-5">
+  <div class="text-center">
+    <i class="bi bi-exclamation-circle display-1 text-muted mb-3"></i>
+    <h4 class="text-muted">赛事不存在</h4>
+    <a routerLink="/events" class="btn btn-primary mt-3">返回赛事列表</a>
+  </div>
+</div>
+
+<div *ngIf="!loading && event">
+  <section class="page-header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 class="mb-3">{{ event.name }}</h1>
+          <p class="mb-2 opacity-90">
+            <i class="bi bi-calendar-event me-2"></i>
+            {{ event.eventDate | date:'yyyy年MM月dd日' }}
+            <span *ngIf="event.eventTime" class="ms-3">
+              <i class="bi bi-clock me-2"></i>{{ event.eventTime }}
+            </span>
+          </p>
+          <p class="mb-0 opacity-90">
+            <i class="bi bi-geo-alt me-2"></i>{{ event.location }}
+          </p>
+        </div>
+        <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+          <span class="badge bg-light text-primary p-2 px-3 fs-6">
+            报名时间：{{ event.registrationStartDate | date:'MM-dd' }} 至 {{ event.registrationEndDate | date:'MM-dd' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5">
+    <div class="container">
+      <!-- 标签导航 -->
+      <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+          <a 
+            class="nav-link" 
+            [class.active]="activeTab === 'info'"
+            (click)="setActiveTab('info')"
+            href="javascript:void(0)"
+          >
+            赛事介绍
+          </a>
+        </li>
+        <li class="nav-item">
+          <a 
+            class="nav-link" 
+            [class.active]="activeTab === 'groups'"
+            (click)="setActiveTab('groups')"
+            href="javascript:void(0)"
+          >
+            赛事组别
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="regulation">
+          <a 
+            class="nav-link" 
+            [class.active]="activeTab === 'regulation'"
+            (click)="setActiveTab('regulation')"
+            href="javascript:void(0)"
+          >
+            竞赛规程
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="pickupNote">
+          <a 
+            class="nav-link" 
+            [class.active]="activeTab === 'pickup'"
+            (click)="setActiveTab('pickup')"
+            href="javascript:void(0)"
+          >
+            领物须知
+          </a>
+        </li>
+      </ul>
+
+      <!-- 赛事介绍 -->
+      <div *ngIf="activeTab === 'info'" class="card">
+        <div class="card-body p-5">
+          <h4 class="fw-bold mb-4">赛事介绍</h4>
+          <div *ngIf="event.description" [innerHTML]="event.description.replace(/\n/g, '<br>')">
+          </div>
+          <div *ngIf="!event.description" class="text-muted">
+            暂无赛事介绍
+          </div>
+        </div>
+      </div>
+
+      <!-- 赛事组别 -->
+      <div *ngIf="activeTab === 'groups'">
+        <div class="row">
+          <div class="col-md-6 col-lg-4 mb-4" *ngFor="let group of groups">
+            <div class="card h-100">
+              <div class="card-header">
+                <h5 class="mb-0 fw-bold">{{ group.name }}</h5>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <p class="mb-1"><strong>距离：</strong>{{ group.distance }}</p>
+                  <p class="mb-1"><strong>报名费：</strong><span class="text-primary fw-bold fs-5">¥{{ group.registrationFee }}</span></p>
+                  <p class="mb-1"><strong>名额：</strong>{{ group.maxParticipants }}人</p>
+                  <p class="mb-0" *ngIf="group.ageMin || group.ageMax">
+                    <strong>年龄限制：</strong>
+                    {{ group.ageMin ? group.ageMin + '岁' : '' }}
+                    {{ group.ageMin && group.ageMax ? '-' : '' }}
+                    {{ group.ageMax ? group.ageMax + '岁' : '' }}
+                  </p>
+                  <p class="mb-0" *ngIf="group.genderLimit !== 'all'">
+                    <strong>性别限制：</strong>{{ group.genderLimit === 'male' ? '仅限男性' : '仅限女性' }}
+                  </p>
+                </div>
+                <div class="d-grid">
+                  <button 
+                    class="btn btn-primary"
+                    (click)="openRegisterModal(group)"
+                  >
+                    <i class="bi bi-pencil-square me-1"></i>立即报名
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="groups.length === 0" class="card">
+          <div class="card-body text-center py-5">
+            <i class="bi bi-inboxes display-1 text-muted mb-3"></i>
+            <h5 class="text-muted">暂无赛事组别</h5>
+          </div>
+        </div>
+      </div>
+
+      <!-- 竞赛规程 -->
+      <div *ngIf="activeTab === 'regulation' && regulation" class="card">
+        <div class="card-header">
+          <h4 class="mb-0 fw-bold">{{ regulation.title }}</h4>
+        </div>
+        <div class="card-body p-5">
+          <div *ngIf="regulation.content" [innerHTML]="regulation.content.replace(/\n/g, '<br>')">
+          </div>
+        </div>
+      </div>
+
+      <!-- 领物须知 -->
+      <div *ngIf="activeTab === 'pickup' && pickupNote" class="card">
+        <div class="card-header">
+          <h4 class="mb-0 fw-bold">{{ pickupNote.title }}</h4>
+        </div>
+        <div class="card-body p-5">
+          <div class="row mb-4" *ngIf="pickupNote.pickupDate || pickupNote.pickupLocation">
+            <div class="col-md-6" *ngIf="pickupNote.pickupDate">
+              <p class="mb-1"><strong>领物日期：</strong>{{ pickupNote.pickupDate | date:'yyyy年MM月dd日' }}</p>
+            </div>
+            <div class="col-md-6" *ngIf="pickupNote.pickupLocation">
+              <p class="mb-1"><strong>领物地点：</strong>{{ pickupNote.pickupLocation }}</p>
+            </div>
+          </div>
+          <div *ngIf="pickupNote.content" [innerHTML]="pickupNote.content.replace(/\n/g, '<br>')">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 报名模态框 -->
+<div class="modal fade" [class.show]="showRegisterModal" [class.d-block]="showRegisterModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold">
+          <i class="bi bi-pencil-square text-primary me-2"></i>报名确认
+        </h5>
+        <button type="button" class="btn-close" (click)="showRegisterModal = false"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <div class="alert alert-info" *ngIf="selectedGroup">
+            <p class="mb-1"><strong>报名组别：</strong>{{ selectedGroup.name }}</p>
+            <p class="mb-0"><strong>报名费：</strong><span class="text-primary fw-bold">¥{{ selectedGroup.registrationFee }}</span></p>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">T恤尺码 <span class="text-danger">*</span></label>
+            <select class="form-select" formControlName="shirtSize">
+              <option value="">请选择尺码</option>
+              <option value="XS">XS (160/80A)</option>
+              <option value="S">S (165/84A)</option>
+              <option value="M">M (170/88A)</option>
+              <option value="L">L (175/92A)</option>
+              <option value="XL">XL (180/96A)</option>
+              <option value="XXL">XXL (185/100A)</option>
+              <option value="XXXL">XXXL (190/104A)</option>
+            </select>
+            <div *ngIf="registerForm.get('shirtSize')?.invalid && registerForm.get('shirtSize')?.touched" class="text-danger small">
+              请选择T恤尺码
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">紧急联系人</label>
+              <input type="text" class="form-control" formControlName="emergencyContact" placeholder="请输入紧急联系人">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">紧急联系电话</label>
+              <input type="tel" class="form-control" formControlName="emergencyPhone" placeholder="请输入紧急联系电话">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">病史信息</label>
+            <textarea class="form-control" formControlName="medicalHistory" rows="2" placeholder="如有病史请如实填写（选填）"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">备注</label>
+            <textarea class="form-control" formControlName="remark" rows="2" placeholder="其他备注信息（选填）"></textarea>
+          </div>
+
+          <div class="alert alert-warning small" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            请确保您的身体状况适合参加马拉松赛事。报名成功后，请关注赛事通知。
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="showRegisterModal = false">取消</button>
+        <button 
+          type="button" 
+          class="btn btn-primary"
+          [disabled]="submitting || registerForm.invalid"
+          (click)="onSubmit()"
+        >
+          <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+          {{ submitting ? '提交中...' : '确认报名' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="showRegisterModal" class="modal-backdrop fade show"></div>

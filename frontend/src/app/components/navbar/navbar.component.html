@@ -1,0 +1,74 @@
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">
+      <i class="bi bi-wind logo-icon"></i>逐风马
+    </a>
+    
+    <button 
+      class="navbar-toggler" 
+      type="button" 
+      (click)="toggleCollapse()"
+      aria-controls="navbarNav" 
+      aria-expanded="false" 
+      aria-label="Toggle navigation"
+    >
+      <i class="bi bi-list text-white fs-3"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" [class.show]="!isCollapsed" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">首页</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/events" routerLinkActive="active">赛事列表</a>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav">
+        <ng-container *ngIf="(currentUser$ | async) as user; else notLoggedIn">
+          <li class="nav-item" *ngIf="user.userType === 'admin'">
+            <a class="nav-link" routerLink="/admin">
+              <i class="bi bi-speedometer2 me-1"></i>管理后台
+            </a>
+          </li>
+          <li class="nav-item" *ngIf="user.userType === 'user'">
+            <a class="nav-link" routerLink="/my-registrations">
+              <i class="bi bi-clipboard-check me-1"></i>我的报名
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a 
+              class="nav-link dropdown-toggle" 
+              href="#" 
+              id="userDropdown" 
+              role="button" 
+              data-bs-toggle="dropdown" 
+              aria-expanded="false"
+            >
+              <i class="bi bi-person-circle me-1"></i>{{ user.realName }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" routerLink="/my-registrations" *ngIf="user.userType === 'user'">我的报名</a></li>
+              <li><hr class="dropdown-divider" *ngIf="user.userType === 'user'"></li>
+              <li><a class="dropdown-item" href="#" (click)="logout(); $event.preventDefault()">退出登录</a></li>
+            </ul>
+          </li>
+        </ng-container>
+
+        <ng-template #notLoggedIn>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login">
+              <i class="bi bi-box-arrow-in-right me-1"></i>登录
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/register">
+              <i class="bi bi-person-plus me-1"></i>注册
+            </a>
+          </li>
+        </ng-template>
+      </ul>
+    </div>
+  </div>
+</nav>
